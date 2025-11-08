@@ -1,13 +1,13 @@
-name: fashion
+name: fashion_recommender
 dependencies:
   - python=3.11
   - pip
+  - opencv  # ✅ correct conda package name
   - pip:
       - streamlit==1.51.0
       - mediapipe==0.10.15
       - lightgbm==4.5.0
       - numpy==1.26.4
-      - pandas==2.3.3
-      - opencv-python==4.10.0.84
+      - pandas==2.2.2
       - joblib==1.4.2
       - scikit-learn==1.5.2
