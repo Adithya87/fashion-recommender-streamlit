@@ -139,6 +139,9 @@ try:
         image = cv2.imdecode(file_bytes, 1)
         st.image(cv2.cvtColor(image, cv2.COLOR_BGR2RGB), caption="Uploaded Image", use_container_width=True)
 
+        height_cm = st.number_input("Height (cm)", min_value=50.0, max_value=250.0, value=170.0, step=0.5, format="%.1f")
+        weight_kg = st.number_input("Weight (kg)", min_value=20.0, max_value=300.0, value=70.0, step=0.1, format="%.1f")
+
         if st.button("✨ Generate Outfit Suggestions"):
             with st.spinner("🔄 Loading models..."):
                 shirt_model = lgb.Booster(model_file="models/shirt_model.txt")
@@ -155,6 +158,52 @@ try:
                     st.success(f"Detected Skin RGB: {skin_rgb}")
                     shirts, pants, combos = predict_outfit(skin_rgb, models)
                     display_outfits(skin_rgb, shirts, pants, combos)
+                    # --- BMI calculation and body-shape based advice ---
+                    def bmi_and_style_advice(weight, height_cm):
+                        if height_cm <= 0:
+                            return None, None, ["Please enter a valid height."]
+                        h_m = height_cm / 100.0
+                        bmi = weight / (h_m * h_m)
+                        bmi_val = round(bmi, 1)
+                        if bmi < 18.5:
+                            category = "Underweight"
+                            suggestions = [
+                                "Slim-fit shirts suit you",
+                                "Try fitted/tailored jackets to add shape",
+                                "Avoid bulky layers that overwhelm your frame",
+                            ]
+                        elif bmi < 25:
+                            category = "Normal"
+                            suggestions = [
+                                "Both slim-fit and regular-fit shirts work well",
+                                "Tailored suits and structured pieces will look sharp",
+                                "You can experiment with slim and regular trouser cuts",
+                            ]
+                        elif bmi < 30:
+                            category = "Overweight"
+                            suggestions = [
+                                "Structured, slightly looser shirts suit you (avoid very tight slim-fit)",
+                                "Choose mid-weight fabrics with some structure",
+                                "Straight or slightly tapered pants are flattering",
+                            ]
+                        else:
+                            category = "Obese"
+                            suggestions = [
+                                "Relaxed or tailored fits suit you — avoid clingy fabrics",
+                                "Use vertical lines and darker tones to create a slimming effect",
+                                "Structured blazers and open layers add a flattering silhouette",
+                            ]
+                        return bmi_val, category, suggestions
+
+                    bmi_val, bmi_category, bmi_suggestions = bmi_and_style_advice(weight_kg, height_cm)
+                    st.subheader("📏 Body Metrics & Style Advice")
+                    if bmi_val is None:
+                        st.warning("Please provide a valid height to compute BMI and style suggestions.")
+                    else:
+                        st.metric(label="BMI", value=f"{bmi_val} ({bmi_category})")
+                        st.markdown("**Recommended style tips based on your body type:**")
+                        for tip in bmi_suggestions:
+                            st.write(f"- {tip}")
 
 except Exception as e:
     show_error(e)

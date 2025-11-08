@@ -1,9 +1,8 @@
-streamlit>=1.0
-numpy
-pandas
-opencv-python
-mediapipe
-lightgbm
-scikit-learn
-joblib
-matplotlib
+streamlit==1.51.0
+mediapipe==0.10.15
+lightgbm==4.5.0
+numpy==1.26.4
+pandas==2.2.2
+opencv-python-headless==4.10.0.84
+joblib==1.4.2
+scikit-learn==1.5.2
