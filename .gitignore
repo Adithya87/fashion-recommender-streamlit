@@ -1,0 +1,15 @@
+# Ignore virtual environment
+venv/
+
+# Ignore temporary files
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Ignore local data and OS-specific stuff
+.DS_Store
+Thumbs.db
+
+# Ignore model cache or logs
+*.log
